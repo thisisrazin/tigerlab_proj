@@ -1,0 +1,130 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ranking Table</title> 
+        {% load static %}  
+        <link 
+            rel="stylesheet" type="text/css"
+            href="{% static 'sports_league/css/bootstrap.css' %}" 
+        >  
+        <script src="{% static 'sports_league/js/bootstrap.min.js' %}"></script>  
+    </head>
+
+    <body>
+        <div class="container-fluid p-2 bg-primary text-white text-center">
+            <h1>Sports League - Ranking Table</h1>
+        </div>
+        <br>
+        <div class="form-group">
+            <form 
+                method="POST"
+                enctype="multipart/form-data"
+                action="/sports_league/upload/"
+            >
+                {{form.as_p}}
+                {% csrf_token %}
+                <button name='uploadFileBtn' class="btn btn-secondary">
+                    Submit
+                </button>
+            </form>
+        </div>
+
+        <br>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li  {% if message.tags %} class=" {{message.tags}} " {% endif %}> {{message}} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if resultFile %}
+        Uploaded File: {{resultFile.resultID}}
+        <br><br>
+        <form method="POST" action="/sports_league/match/add/{{resultFile.resultID}}/">
+            <table>{{form2}}</table>
+            {% csrf_token %}
+            <br>
+            <button name='testBtn' class="btn btn-success">
+                Add Match
+            </button>
+        </form>
+        <br>
+            {% if matches %}
+            <div class="col-12 pt-2">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Team One</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Team Two</th>
+                            <th scope="col">Score</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in matches %}
+                        <tr>
+                            <td>{{match.teamOne}}</td>
+                            <td>{{match.teamOneScore}}</td>
+                            <td>{{match.teamTwo}}</td>
+                            <td>{{match.teamTwoScore}}</td>
+                            <td>
+                                <form
+                                    method="POST"
+                                    action="/sports_league/match/edit/{{resultFile.resultID}}/{{match.pk}}"
+                                >
+                                    {% csrf_token %}
+                                    <button name="edit-{{match.pk}}" class="btn btn-primary btn-sm">
+                                        Edit....
+                                    </button>
+                                </form>
+
+                                <form
+                                    method="POST"
+                                    action="/sports_league/match/delete/{{resultFile.resultID}}/{{match.pk}}"
+                                >
+                                    {% csrf_token %}
+                                    <button name="delete-{{match.pk}}" class="btn btn-danger btn-sm">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        {% if sortedRanking %}
+        <div class="col-12 pt-2">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Ranking</th>
+                        <th scope="col">Team</th>
+                        <th scope="col">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rank in sortedRanking %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{rank.team}}</td>
+                        <td>{{rank.points}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+    </body>
+
+</html> 

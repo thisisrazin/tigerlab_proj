@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ranking Table</title> 
+        {% load static %}  
+        <link 
+            rel="stylesheet" type="text/css"
+            href="{% static 'sports_league/css/bootstrap.css' %}" 
+        >  
+        <script src="{% static 'sports_league/js/bootstrap.min.js' %}"></script>  
+    </head>
+    <body>
+        <div class="container-fluid p-2 bg-primary text-white text-center">
+            <h1>Sports League - Edit Match</h1>
+        </div>
+
+        <br>
+        {% if resultFile %}
+        Uploaded File: {{resultFile.resultID}}
+        {% endif %}
+        <br>
+        <br>
+
+        <div class="form-group">
+            <form 
+                method="POST"
+                enctype="multipart/form-data"
+                action="/sports_league/match/edit/save/{{resultFile.resultID}}/{{match.pk}}"
+            >
+                {{form.as_p}}
+                {% csrf_token %}
+                <br>
+                <button name='editMatchBtn' class="btn btn-secondary">
+                    Submit
+                </button>
+            </form>
+        </div>
+
+    </body>
+</html>
